@@ -304,6 +304,14 @@ class DefaultController extends Controller
 
         return $this->redirectToRoute('homepage'); // redirectToRoute permet de rediriger vers le name d'une url, ici homepage = index.twig.html
 
+    }
+
+    /**
+     * @Route("/", name="homepage")
+     */
+    public function getLastTenVote(Request $request,Item  $item) {
+
+        return $this->getDoctrine()->getRepository('AppBundle:Item')->getLastTenVote();
 
     }
 

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Bienvenue sur mon site</h1>
+
+    <h2>Propositions</h2>
+
+
+    {% for message in app.flashes('success') %}
+        <div class="flash-notice alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <a href="{{ url('vote_index', {item: item1.id}) }}">{{ item1.titre }}
+        {% if item1.imageName %}
+            <img src="{{ asset('uploads/' ~ item1.imageName ) }}" alt="">
+        {% endif %}
+    </a>
+
+    <a href="{{ url('vote_index', {item: item2.id}) }}">
+        {{ item2.titre }}
+        {% if item2.imageName %}
+            <img src="{{ asset('uploads/' ~ item2.imageName ) }}" alt="">
+        {% endif %}
+    </a>
+
+{% endblock %}

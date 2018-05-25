@@ -1,0 +1,7 @@
+{%  extends 'base.html.twig' %}
+
+{%  block body %}
+La date est : {{ time }}
+<br>
+La date twig est : {{ 'now'|date('d/m/Y H:i:s') }}
+{% endblock %}

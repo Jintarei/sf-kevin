@@ -1,0 +1,43 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% if error %}
+    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}
+<div class="valign">
+<div class="container ">
+    <div class="row">
+        <div class="col-md-6 offset-md-2">
+
+            <form action="{{ path("fos_user_security_check") }}" method="post" class="form-signin">
+                {% if csrf_token %}
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}"/>
+                {% endif %}
+                <div class="text-center mb-4">
+                    <h1 class="text-primary">Admin</h1>
+                </div>
+
+                <div class="form-label-group">
+                    <input type="text" name="_username" id="inputEmail" class="form-control" placeholder="{{ 'security.login.username'|trans }}" required autofocus>
+                    <label for="inputEmail">{{ 'security.login.username'|trans }}</label>
+                </div>
+
+                <div class="form-label-group">
+                    <input type="password"  name="_password" id="inputPassword" class="form-control" placeholder="{{ 'security.login.password'|trans }}" required>
+                    <label for="inputPassword">{{ 'security.login.password'|trans }}</label>
+                </div>
+
+                <div class="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" name="_remember_me" value="one"> {{ 'security.login.remember_me'|trans }}
+                    </label>
+                </div>
+
+                <input class="btn btn-lg btn-primary btn-block" type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}"/>
+
+
+                <p class="mt-5 mb-3 text-muted text-center">&copy; {{ 'now'|date('Y') }}</p>
+            </form>
+
+        </div>
+    </div>
+</div></div>

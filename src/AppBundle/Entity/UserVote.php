@@ -62,5 +62,5 @@ class UserVote
     {
         return $this->title;
     }
-}
 
+}

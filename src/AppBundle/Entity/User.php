@@ -24,4 +24,45 @@ class User extends BaseUser
         parent::__construct();
         // your own logic
     }
+
+    /**
+     *
+     * @ORM\ManyToMany(targetEntity="Item", mappedBy="user")
+     */
+    private $items;
+
+
+    /**
+     * Add item
+     *
+     * @param \AppBundle\Entity\Item $item
+     *
+     * @return User
+     */
+    public function addItem(\AppBundle\Entity\Item $item)
+    {
+        $this->items[] = $item;
+
+        return $this;
+    }
+
+    /**
+     * Remove item
+     *
+     * @param \AppBundle\Entity\Item $item
+     */
+    public function removeItem(\AppBundle\Entity\Item $item)
+    {
+        $this->items->removeElement($item);
+    }
+
+    /**
+     * Get items
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
 }

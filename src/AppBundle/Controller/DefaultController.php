@@ -33,12 +33,13 @@ class DefaultController extends Controller
         shuffle($items);
         $item1 = $items[0];
         $item2 = $items[1];
-        // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
             'item1' => $item1,
             'item2' => $item2,
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
         ]);
+
+//        return $this->getDoctrine()->getRepository('AppBundle:User')->getLastTenVote();
     }
     /**
      * @Route("/search", name="searchhp", defaults={"word" = false})
@@ -108,6 +109,7 @@ class DefaultController extends Controller
         $em->flush();
         return new Response("Sauvegarde OK sur : ".$category->getId() ) ;
     }
+
     /**
      * @Route("/demo/page1", name="demo_page1")
      */
@@ -117,7 +119,6 @@ class DefaultController extends Controller
         return new Response("Category : ".$category->getTitle() . ' <br />Post : '.$post->getTitle() ) ;
     }
 
-
     /**
      * @Route("/demo/page_listing", name="demo_page_listing")
      */
@@ -126,6 +127,7 @@ class DefaultController extends Controller
         $posts = $this->getDoctrine()->getRepository('AppBundle:Post')->findAll();
         return $this->render('default/post_listing.html.twig', ['posts' => $posts]);
     }
+
     /**
      * @Route("/demo/page/{post}", name="demo_post_show")
      */
@@ -271,7 +273,6 @@ class DefaultController extends Controller
 
       }
 
-
      /**
       * @Route("/news", name="news_index")
       */
@@ -302,6 +303,11 @@ class DefaultController extends Controller
         //$url = $this->generateUrl('vote', array('slug' => 'my-blog-post'));
         $this->addFlash('success', 'Votre vote a bien été comptabilisé.');
 
+        $user = $this->getUser();
+        if ($user) {
+            $user->addItem($item);
+        }
+
         return $this->redirectToRoute('homepage'); // redirectToRoute permet de rediriger vers le name d'une url, ici homepage = index.twig.html
 
     }
@@ -309,11 +315,11 @@ class DefaultController extends Controller
     /**
      * @Route("/", name="homepage")
      */
-    public function getLastTenVote(Request $request,Item  $item) {
+    /*public function getLastTenVote(Request $request,Item  $item) {
 
         return $this->getDoctrine()->getRepository('AppBundle:Item')->getLastTenVote();
 
-    }
+    }*/
 
     /*public function categoryListAction(Request $request){
         $categories = $this->getDoctrine()->getRepository('AppBundle:ItemCategory')->findAll();

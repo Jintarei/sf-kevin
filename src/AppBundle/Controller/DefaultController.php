@@ -3,9 +3,11 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Item;
+use AppBundle\Entity\ItemUser;
 use AppBundle\Entity\Post;
 use AppBundle\Entity\PostCategory;
 use AppBundle\Form\PostType;
+use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
@@ -18,6 +20,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
+    private $itemUser;
+    private $em;
+
+    public function __construct()
+    {
+    }
 
     public function getMenuAction($route)
     {
@@ -30,12 +38,21 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         $items = $this->getDoctrine()->getRepository('AppBundle:Item')->findAll();
+        $lastVotes = $this->getDoctrine()->getRepository('AppBundle:ItemUser')->findBy([], ['id' => 'DESC'], 10);
         shuffle($items);
         $item1 = $items[0];
         $item2 = $items[1];
+
+        $em = $this->getDoctrine()->getManager();
+        $itemUser = $em->getRepository(ItemUser::class);
+        $userVotes = $itemUser->findBy(['userId' => $this->getUser()], array('id'=>'DESC'), 5);
+
         return $this->render('default/index.html.twig', [
             'item1' => $item1,
             'item2' => $item2,
+            'userVotes' => count($userVotes),
+            'userItem' => $userVotes,
+            'lastVotes' => $lastVotes,
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
         ]);
 
@@ -287,13 +304,25 @@ class DefaultController extends Controller
      */
     public function topsAction(Request $request){
 
-        return $this->render('default/tops.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $categories = $em->getRepository('AppBundle:ItemCategory')->findAll();
+        $top = [];
+        foreach ($categories as $key => $category) {
+            $topItem = $em->getRepository('AppBundle:Item')->getTopItemByCategory($category->getId());
+            $top[$key]['topItem'] = $topItem;
+            $top[$key]['category'] = $category;
+        }
+
+        return $this->render('default/tops.html.twig', [
+            'top' => $top
+        ]);
+
     }
 
     /**
      * @Route("/vote/{item}", name="vote_index")
      */
-    public function voteAction(Request $request,Item  $item){
+    public function voteAction(Request $request,Item  $item) {
 
       //  $item = $this->getDoctrine()->getRepository('AppBundle:Item')->find($item); // Possibilité d'utiliser cette méthode à la place de "Item $item" ci-dessus
         $item->setNbVote( $item->getNbVote() +1); // On set un Vote, et on incrémente de +1
@@ -306,6 +335,12 @@ class DefaultController extends Controller
         $user = $this->getUser();
         if ($user) {
             $user->addItem($item);
+            $itemUser = new ItemUser();
+            $itemUser->setItemId($item);
+            $itemUser->setUserId($user);
+
+            $em->persist($itemUser); // Modification pour l'entité item.
+            $em->flush();
         }
 
         return $this->redirectToRoute('homepage'); // redirectToRoute permet de rediriger vers le name d'une url, ici homepage = index.twig.html

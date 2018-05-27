@@ -10,4 +10,10 @@ namespace AppBundle\Repository;
  */
 class ItemRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getTopItemByCategory($categoryId)
+    {
+        $topByCategory = $this->findOneBy(['category' => $categoryId], ['nbVote' => 'DESC'], 1);
+
+        return $topByCategory;
+    }
 }

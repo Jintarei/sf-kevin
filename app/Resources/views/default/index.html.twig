@@ -1,10 +1,38 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Bienvenue sur mon site</h1>
+    <h1>Tu préfères ?</h1>
 
-    <h2>Propositions</h2>
-
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                {% if app.user %}
+                    {{ app.user.username }} : {{ userVotes }} derniers votes
+                {% endif %}
+                <ul>
+                    {% for item in userItem %}
+                        <li>
+                            {% if item.itemId.titre %}
+                                {{ item.itemId.titre }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-sm">
+                <p>Derniers votes (du plus récent au plus ancien) :</p>
+                <ul>
+                    {% for item in lastVotes %}
+                        <li>
+                            {% if item.itemId.titre %}
+                                {{ item.itemId.titre }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 
     {% for message in app.flashes('success') %}
         <div class="flash-notice alert-success">
@@ -12,17 +40,28 @@
         </div>
     {% endfor %}
 
-    <a href="{{ url('vote_index', {item: item1.id}) }}">{{ item1.titre }}
-        {% if item1.imageName %}
-            <img src="{{ asset('uploads/' ~ item1.imageName ) }}" alt="">
-        {% endif %}
-    </a>
-
-    <a href="{{ url('vote_index', {item: item2.id}) }}">
-        {{ item2.titre }}
-        {% if item2.imageName %}
-            <img src="{{ asset('uploads/' ~ item2.imageName ) }}" alt="">
-        {% endif %}
-    </a>
+    <div class="container">
+        <h2>Propositions</h2>
+        <div class="row">
+            <div class="col-sm">
+                <a href="{{ url('vote_index', {item: item1.id}) }}">
+                    {{ item1.titre }}
+                    | Nombre de votes: {{ item1.nbVote }}
+                    {% if item1.imageName %}
+                        <img style="width: 100%" src="{{ asset('uploads/' ~ item1.imageName ) }}" alt="">
+                    {% endif %}
+                </a>
+            </div>
+            <div class="col-sm">
+                <a href="{{ url('vote_index', {item: item2.id}) }}">
+                    {{ item2.titre }}
+                    | Nombre de votes: {{ item2.nbVote }}
+                    {% if item2.imageName %}
+                        <img style="width: 100%" src="{{ asset('uploads/' ~ item2.imageName ) }}" alt="">
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

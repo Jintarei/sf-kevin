@@ -4,4 +4,16 @@
 
   <h1>Tops par catégorie</h1>
 
+  <div>
+    <ul>
+        {% for item in top %}
+          <li>
+              {% if item.category %}
+             <strong>{{ item.category.titre }}</strong><br>
+              {% endif %}
+              Top vote de la Catégorie: <strong>{{ item.topItem.titre }}</strong>
+          </li>
+        {% endfor %}
+    </ul>
+  </div>
 {% endblock %}
